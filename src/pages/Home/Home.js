@@ -1,10 +1,13 @@
 import React from 'react'
-import {CoinsList} from 'components';
+import {CoinsList, HomeDashboard} from 'components';
 
-const Home = () => {
+
+const Home = (props) => {
+    //console.log('here are those props-->',props)
     return (
         <div>
-            <CoinsList />
+            <HomeDashboard currency={props.currency} />
+            <CoinsList currency={props.currency} />
         </div>
     )
 }
