@@ -49,7 +49,8 @@ class HomeDashboard extends React.Component {
             const {data} = await axios.get(`https://api.coingecko.com/api/v3/coins/bitcoin/market_chart?vs_currency=${this.props.currency}&days=14`)
 
             const bitCoin = data;
-            this.setState({coinData: bitCoin, isLoading: false})
+            console.log(data)
+            this.setState({coinData: null, isLoading: false})
             //console.log('Homedashboard api -->', bitCoin)
         } catch(err){
             console.log('here is the err:',err)
