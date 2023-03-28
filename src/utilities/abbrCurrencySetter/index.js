@@ -1,7 +1,6 @@
 
 
 const abbrCurrencySetter = (number, currency) => {
-  console.log(number)
   return Intl.NumberFormat(
     'en', 
     { 

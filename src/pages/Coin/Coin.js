@@ -61,10 +61,6 @@ class Coin extends Component {
         this.getCoin(this.props.match.params.coinId)
     }
 
-    
-
-
-
     render() {
 
         console.log('Here is the COIN data from Coin.js--->', this.state.coin)
@@ -72,8 +68,7 @@ class Coin extends Component {
         const coinData = this.state.coin
         const hasCoin = !this.state.isLoading && this.state.coin;
 
-        // const rawPrice = coinData?.market_data.current_price.usd
-        //Middle Column data
+        //MIDDLE COLUMN DATA
         const price = currencySetter(coinData?.market_data.current_price[this.props.currency], this.props.currency);
         const price_change_percentage = coinData?.market_data.price_change_percentage_1h_in_currency[this.props.currency]
         const profit_1h = coinData?.market_data.price_change_percentage_1h_in_currency[this.props.currency] > 0;
@@ -81,7 +76,7 @@ class Coin extends Component {
         const all_time_high = currencySetter(coinData?.market_data.ath[this.props.currency], this.props.currency);
         const all_time_low = currencySetter(coinData?.market_data.atl[this.props.currency], this.props.currency);
 
-        //Right Column Data
+        //RIGHT COLUMN DATA
          const market_cap = abbrCurrencySetter(coinData?.market_data.market_cap[this.props.currency], this.props.currency);
          const fully_diluted_valuation = abbrCurrencySetter(coinData?.market_data.fully_diluted_valuation[this.props.currency], this.props.currency);
          const total_volume = abbrCurrencySetter(coinData?.market_data.total_volume[this.props.currency], this.props.currency);

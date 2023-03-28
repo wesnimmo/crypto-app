@@ -47,10 +47,8 @@ class HomeDashboard extends React.Component {
         try{
             this.setState({isLoading: true});
             const {data} = await axios.get(`https://api.coingecko.com/api/v3/coins/bitcoin/market_chart?vs_currency=${this.props.currency}&days=14`)
-
             const bitCoin = data;
             this.setState({coinData: bitCoin, isLoading: false})
-            //console.log('Homedashboard api -->', bitCoin)
         } catch(err){
             console.log('here is the err:',err)
         }
@@ -64,25 +62,23 @@ class HomeDashboard extends React.Component {
         const bitCoin = this.state.coinData;
         const hasCoin = !this.state.isLoading && this.state.coinData;
 
+        // CURRENCY FORMATTED DATA
         const price = abbrCurrencySetter(bitCoin?.prices?.[bitCoin.prices.length -1][1], this.props.currency)
-        //const price = Math.round(10 * rawPrice) / 10000
+        const volume = abbrCurrencySetter(bitCoin?.total_volumes?.[bitCoin.prices.length -1][1], this.props.currency)
 
-        // const price = currencySetter(rawPrice)
+        //TIME, DATE, MONTH, YEAR
         const timestamp = (bitCoin?.prices?.[bitCoin.prices.length -1][0]);
         const date = new Date(timestamp)
         const month = date.toLocaleString("en-US", {month: "short"});
         const day = date.toLocaleString("en-US", {day: "numeric"});
         const today = new Date()
         const year = today.getFullYear()
-       
-        //const volume = Math.round(10*rawVolume) / 10000000000
-        const volume = abbrCurrencySetter(bitCoin?.total_volumes?.[bitCoin.prices.length -1][1], this.props.currency)
         
         return (
            <>
             {hasCoin && (
               <div>
-                  <NavbarTicker currency={this.props.currency} />
+                  {/* <NavbarTicker currency={this.props.currency} /> */}
                  <DashboardContainer>
                     <LTCol className="dashboard-column">
                         <LTColheading>

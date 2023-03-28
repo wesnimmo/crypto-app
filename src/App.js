@@ -6,7 +6,6 @@ import {Navbar} from 'components';
 import {Home, Coin} from 'pages';
 import styled, { ThemeProvider } from 'styled-components';
 import { GlobalStyles, darkTheme, lightTheme } from './styles/globalStyles';
-import { Error } from '@mui/icons-material';
 
 const Container = styled.div`
   max-width: 1180px;
@@ -47,16 +46,12 @@ class App extends React.Component {
     changeTheme = () => {
       const change = !this.state.theme
       this.setTheme(change)
-      // this.setState({theme: change})
-      // window.localStorage.setItem('theme', JSON.stringify(change));
     }
 
   componentDidMount(){
       this.getCurrency();
       const localTheme = JSON.parse(window.localStorage.getItem('theme'));
       localTheme !== null ? this.setState({theme: localTheme}) : this.setTheme(true)
-
-      // console.log('my theme is --->',localTheme)
   }
 
   // componentDidUpdate(prevProps, prevState){
@@ -71,18 +66,6 @@ class App extends React.Component {
   }
   
   render() {
-    //console.log('New currency selection-->', this.state.currency)
-    // const curr = "gbp";
-    // const num = 100000000
-
-    // const currencySetter = (currency, number) => {
-    //  return Intl.NumberFormat(
-    //    'en-US', 
-    //    {currency: currency, style: 'currency', notation: 'compact'}
-    //  ).format(number)
-    // }
-
-    // console.log(currencySetter(curr, num))
 
     const hasCurrencies = !this.state.isLoading && this.state.currencies.length > 0;
     

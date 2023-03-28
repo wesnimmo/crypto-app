@@ -6,12 +6,12 @@ class Toggler extends React.Component {
     render() {
         return (
             <ToggleContainer
-                class="toggle-container" 
+                className="toggle-container" 
                 style={{background: (this.props.theme ? 'white' : '#191b1f')}} 
                 onClick={this.props.changeTheme}
             >
                 <span
-                    class="toggle-switch" 
+                    className="toggle-switch" 
                     style={{
                         left: (this.props.theme ? '0px' : '20px'), 
                         background: (this.props.theme ? '#191b1f' : "white") 

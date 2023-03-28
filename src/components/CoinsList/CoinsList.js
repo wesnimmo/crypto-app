@@ -35,7 +35,7 @@ class CoinsList extends React.Component {
     }
 
     render() {
-        console.log('Here is the CoinList-->' ,this.state.coins)
+        //console.log('Here is the CoinList-->' ,this.state.coins)
         return (
            <>
              <InfiniteScroll
@@ -45,26 +45,30 @@ class CoinsList extends React.Component {
                 loader={<h4>Loading...</h4>}
             > 
                 <Table>
-                    <Row>
-                        <Heading>#</Heading>
-                        <Heading>Name</Heading>
-                        <Heading>Price</Heading>
-                        <Heading>1h%</Heading>
-                        <Heading>24h%</Heading>
-                        <Heading>7d%</Heading>
-                        <Heading>24h Volume/Market Cap</Heading>
-                        <Heading>Circulating/Total Supply</Heading>
-                        <Heading>Last 7d</Heading>
-                    </Row>
+                    <thead>
+                        <Row>
+                            <Heading>#</Heading>
+                            <Heading>Name</Heading>
+                            <Heading>Price</Heading>
+                            <Heading>1h%</Heading>
+                            <Heading>24h%</Heading>
+                            <Heading>7d%</Heading>
+                            <Heading>24h Volume/Market Cap</Heading>
+                            <Heading>Circulating/Total Supply</Heading>
+                            <Heading>Last 7d</Heading>
+                        </Row>
+                    </thead>
+                    <tbody>
                         {
                             this.state.coins.map((coin) => {
                                 return (
                             
-                                    <ListItem coin={coin} curr={this.props.currency}/>
+                                    <ListItem coin={coin} curr={this.props.currency} key={coin.id}/>
                                 
                                 )
                             })
-                        }
+                        }    
+                    </tbody>    
                 </Table>
             </InfiniteScroll>
            </>

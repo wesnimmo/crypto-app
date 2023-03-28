@@ -34,30 +34,21 @@ ChartJS.register(
 const ListItem = (props) => {
 
 
-    const profit_1h = props.coin.price_change_percentage_1h_in_currency > 0;
-    const loss_1h = props.coin.price_change_percentage_1h_in_currency < 0;
-    const profit_24h = props.coin.price_change_percentage_24h > 0;
-    const loss_24h = props.coin.price_change_percentage_24h < 0;
-    const profit_7d =  props.coin.price_change_percentage_7d_in_currency > 0;
-    const loss_7d =  props.coin.price_change_percentage_7d_in_currency < 0;
+    //PERCENTAGE CHANGE DATA
+    const profit_1h = props.coin?.price_change_percentage_1h_in_currency > 0;
+    const loss_1h = props.coin?.price_change_percentage_1h_in_currency < 0;
+    const profit_24h = props.coin?.price_change_percentage_24h > 0;
+    const loss_24h = props.coin?.price_change_percentage_24h < 0;
+    const profit_7d =  props.coin?.price_change_percentage_7d_in_currency > 0;
+    const loss_7d =  props.coin?.price_change_percentage_7d_in_currency < 0;
 
-    
+   //CURRENCY FORMATTED DATA 
     const volume = abbrCurrencySetter(props.coin.total_volume, props.curr)
-    // const volume = Math.round(10*rawVolume) / 10000000000;
-
     const volume_market_cap = abbrCurrencySetter(props.coin.market_cap, props.curr)
-    // const volume_market_cap = Math.round(10*rawMarketCap) / 10000000000
-
     const circulating_supply = abbrCurrencySetter(props.coin.circulating_supply, props.curr)
-    // const circulating_supply = Math.round(10*rawCirculatingSupply) / 10000000000;
-
     const total_supply = abbrCurrencySetter(props.coin.total_supply, props.curr)
-    // const total_supply = Math.round(10*rawTotalSupply) / 10000000000
-
-    
    
     return (
-    
         <TR>
             <TD>{props.coin.market_cap_rank}</TD>
             <TD>
@@ -68,7 +59,6 @@ const ListItem = (props) => {
                 </Link> 
             </TD>
             <TD>
-              {/* ${parseFloat(props.coin.current_price.toFixed(2)).toLocaleString()} */}
               {currencySetter(props.coin.current_price, props.curr)}
               </TD>
 
