@@ -8,34 +8,52 @@ class CoinsList extends React.Component {
 
     state = {
         coins: [],
-        isLoading: false
+        isLoading: false,
+        errMessage: "",
+        isMounted: false  // add isMounted flag to state
     }
 
-    getCoins = async ( perPage = 20) => {
+    // create an instance variable to store the axios request
+    source = axios.CancelToken.source()
+
+    getCoins = async (perPage = 20) => {
         try {
-            this.setState({isLoading: true});
-            const {data} = await axios.get(`https://api.coingecko.com/api/v3/coins/markets?vs_currency=${this.props.currency}&order=market_cap_desc&per_page=${perPage}&page=1&sparkline=true&price_change_percentage=1h%2C24h%2C7d`);
+            this.setStateIfMounted({ isLoading: true });
+            const { data } = await axios.get(`https://api.coingecko.com/api/v3/coins/markets?vs_currency=${this.props.currency}&order=market_cap_desc&per_page=${perPage}&page=1&sparkline=true&price_change_percentage=1h%2C24h%2C7d`, { crossDomain: true, cancelToken: this.source.token });
             const coins = data;
-            this.setState({coins, isLoading: false})
-
+            this.setStateIfMounted({ coins, isLoading: false });
         } catch (err) {
-          console.log(err)
+            console.log(err)
+            this.setStateIfMounted({
+                errMessage: "Api is down check back later",
+                isLoading: false
+            });
         }
-
     }
 
     componentDidMount() {
+        this.setState({ isMounted: true });  // set isMounted flag to true
         this.getCoins()
+    }
+
+    componentWillUnmount() {
+        this.source.cancel('Component is unmounted');
+        this.setState({ isMounted: false });  // set isMounted flag to false
     }
 
     componentDidUpdate(prevProps, prevState){
         if(this.props.currency !== prevProps.currency){
             this.getCoins()
         }
+     }
+
+    setStateIfMounted = (state) => {
+        if (this.state.isMounted) {
+            this.setState(state);
+        }
     }
 
     render() {
-        //console.log('Here is the CoinList-->' ,this.state.coins)
         return (
            <>
              <InfiniteScroll
@@ -64,12 +82,14 @@ class CoinsList extends React.Component {
                                 return (
                             
                                     <ListItem coin={coin} curr={this.props.currency} key={coin.id}/>
+
                                 
                                 )
                             })
                         }    
                     </tbody>    
                 </Table>
+                {this.state.errMessage && <h2>{this.state.errMessage}</h2>}
             </InfiniteScroll>
            </>
         )

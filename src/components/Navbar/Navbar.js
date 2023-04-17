@@ -24,7 +24,7 @@ class Navbar extends React.Component {
                         <Forms>
                             <SearchContainer className="search-container">
                                  <SearchIcon />
-                                <input type="text" placeholder="search" name="search"/>
+                                {/* <input type="text" placeholder="search" name="search"/> */}
                             </SearchContainer>
                            <Select
                                 onChange={(e) => this.handleChange(e.target.value)}

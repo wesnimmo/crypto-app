@@ -43,10 +43,13 @@ class HomeDashboard extends React.Component {
         isLoading: false
     }
 
+    // create an instance variable to store the axios request
+    source = axios.CancelToken.source()
+
     getBitCoin = async () => {
         try{
             this.setState({isLoading: true});
-            const {data} = await axios.get(`https://api.coingecko.com/api/v3/coins/bitcoin/market_chart?vs_currency=${this.props.currency}&days=14`)
+            const {data} = await axios.get(`https://api.coingecko.com/api/v3/coins/bitcoin/market_chart?vs_currency=${this.props.currency}&days=14`,{ crossDomain: true, cancelToken: this.source.token })
             const bitCoin = data;
             this.setState({coinData: bitCoin, isLoading: false})
         } catch(err){
@@ -58,16 +61,27 @@ class HomeDashboard extends React.Component {
         this.getBitCoin()
     }
 
+    componentWillUnmount() {
+        // cancel the axios request when the component is unmounted
+        this.source.cancel('Component is unmounted')
+    }
+
+    componentDidUpdate(prevProps, prevState){
+        if(this.props.currency !== prevProps.currency){
+            this.getCoins()
+        }
+    }
+
     render() {
-        const bitCoin = this.state.coinData;
-        const hasCoin = !this.state.isLoading && this.state.coinData;
+        const bitCoin = this.state?.coinData;
+        const hasCoin = !this.state.isLoading && this.state?.coinData;
 
         // CURRENCY FORMATTED DATA
-        const price = abbrCurrencySetter(bitCoin?.prices?.[bitCoin.prices.length -1][1], this.props.currency)
-        const volume = abbrCurrencySetter(bitCoin?.total_volumes?.[bitCoin.prices.length -1][1], this.props.currency)
+        const price = abbrCurrencySetter(bitCoin?.prices?.[bitCoin?.prices.length -1][1], this.props.currency)
+        const volume = abbrCurrencySetter(bitCoin?.total_volumes?.[bitCoin?.prices.length -1][1], this.props.currency)
 
         //TIME, DATE, MONTH, YEAR
-        const timestamp = (bitCoin?.prices?.[bitCoin.prices.length -1][0]);
+        const timestamp = (bitCoin?.prices?.[bitCoin?.prices.length -1][0]);
         const date = new Date(timestamp)
         const month = date.toLocaleString("en-US", {month: "short"});
         const day = date.toLocaleString("en-US", {day: "numeric"});
@@ -89,7 +103,7 @@ class HomeDashboard extends React.Component {
                         <LTColChart>
                             <Line
                                 data={{
-                                    labels: bitCoin.prices?.map((coin) => {
+                                    labels: bitCoin?.prices.map((coin) => {
                                         const timestamp2 = ( coin?.[0]);
                                         let chartDate = new Date(timestamp2)
                                     
@@ -143,7 +157,7 @@ class HomeDashboard extends React.Component {
                         <RTColChart>
                              <Bar
                                 data={{
-                                    labels: bitCoin.prices?.map((coin) => {
+                                    labels: bitCoin?.prices.map((coin) => {
                                         const timestamp2 = ( coin?.[0]);
                                         let chartDate = new Date(timestamp2)
                                     

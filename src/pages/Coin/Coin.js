@@ -37,8 +37,12 @@ class Coin extends Component {
         coin: null,
         isLoading: false,
         hasError: false,
-        clipboard: null
+        clipboard: null,
+        placeholderCurrency: '',
+        priceInputValue: null
     }
+
+    input = React.createRef();
 
     getCoin = async (coinId) => {
         try{
@@ -50,12 +54,25 @@ class Coin extends Component {
 
             this.setState({
                 coin: newObj,
-                isLoading: false
+                isLoading: false,
+                placeholderCurrency: currencySetter(newObj?.market_data.current_price[this.props.currency], this.props.currency),
+                priceInputValue: currencySetter(newObj?.market_data.current_price[this.props.currency], this.props.currency),
             })
         }catch (err) {
             console.log(err)
         }
     }
+
+    handleInput(value) {
+      //const value = e.target.value;
+      const formattedValue = parseFloat(value).toFixed(2);
+     const price = currencySetter(formattedValue, this.props.currency);
+      this.setState({ priceInputValue: price });
+    }
+
+    // handleFocus(e) {
+    //     this.setState({  priceInputValue: e.target.value });
+    //   }
 
     componentDidMount(){
         this.getCoin(this.props.match.params.coinId)
@@ -63,25 +80,29 @@ class Coin extends Component {
 
     render() {
 
-        console.log('Here is the COIN data from Coin.js--->', this.state.coin)
+        console.log('Here is the Current PRICE BABY from Coin.js--->', this.state.placeholderCurrency)
 
         const coinData = this.state.coin
         const hasCoin = !this.state.isLoading && this.state.coin;
 
         //MIDDLE COLUMN DATA
         const price = currencySetter(coinData?.market_data.current_price[this.props.currency], this.props.currency);
-        const price_change_percentage = coinData?.market_data.price_change_percentage_1h_in_currency[this.props.currency]
-        const profit_1h = coinData?.market_data.price_change_percentage_1h_in_currency[this.props.currency] > 0;
-        const loss_1h = coinData?.market_data.price_change_percentage_1h_in_currency[this.props.currency] < 0;
-        const all_time_high = currencySetter(coinData?.market_data.ath[this.props.currency], this.props.currency);
-        const all_time_low = currencySetter(coinData?.market_data.atl[this.props.currency], this.props.currency);
+        const price_change_percentage = coinData?.market_data?.price_change_percentage_1h_in_currency[this.props.currency]
+        const profit_1h = coinData?.market_data?.price_change_percentage_1h_in_currency[this.props.currency] > 0;
+        const loss_1h = coinData?.market_data?.price_change_percentage_1h_in_currency[this.props.currency] < 0;
+        const all_time_high = currencySetter(coinData?.market_data?.ath[this.props.currency], this.props.currency);
+        const all_time_low = currencySetter(coinData?.market_data?.atl[this.props.currency], this.props.currency);
 
         //RIGHT COLUMN DATA
-         const market_cap = abbrCurrencySetter(coinData?.market_data.market_cap[this.props.currency], this.props.currency);
-         const fully_diluted_valuation = abbrCurrencySetter(coinData?.market_data.fully_diluted_valuation[this.props.currency], this.props.currency);
-         const total_volume = abbrCurrencySetter(coinData?.market_data.total_volume[this.props.currency], this.props.currency);
-         const circulating_supply = coinData?.market_data.circulating_supply.toLocaleString();
-         const max_supply = coinData?.market_data.max_supply.toLocaleString();
+         const market_cap = abbrCurrencySetter(coinData?.market_data?.market_cap[this.props.currency], this.props.currency);
+         const fully_diluted_valuation = abbrCurrencySetter(coinData?.market_data?.fully_diluted_valuation[this.props.currency], this.props.currency);
+         const total_volume = abbrCurrencySetter(coinData?.market_data?.total_volume[this.props.currency], this.props.currency);
+         const circulating_supply = coinData?.market_data?.circulating_supply.toLocaleString();
+         const max_supply = coinData?.market_data?.max_supply?.toLocaleString();
+
+         //INPUT FIELDS PLACEHOLDER & VALUE
+         const placeholderCurrency = this.state?.placeholderCurrency;
+        const priceInputValue = this.state?.priceInputValue;
         
         return (
            <>
@@ -122,7 +143,7 @@ class Coin extends Component {
                         <p><span style={{fontWeight: 800}}>FullyDiluted Valuation:</span> {fully_diluted_valuation}</p>
                         <p><span style={{fontWeight: 800}}>Total Volume:</span> {total_volume} </p>
                         <p><span style={{fontWeight: 800}}>Circulating Supply:</span> {circulating_supply}</p>
-                        <p><span style={{fontWeight: 800}}>Max Supply:</span> {max_supply}</p>
+                        <p><span style={{fontWeight: 800}}>Max Supply:</span> {max_supply ? max_supply : 'NA'}</p>
                     </DescTopRt>
                 </DescTopContainer>
 
@@ -165,7 +186,16 @@ class Coin extends Component {
                     <CurrencyConverterContainer>
                         <CurrencyConverter>
                             <p>{this.props.currency.toUpperCase()}</p>
-                            <input value={price} type="text" className="currency-converter-input" />
+                            <input 
+                                placeholder={placeholderCurrency} 
+                                /*pattern="^[0-9]+([.][0-9]+)?$"*/
+                                type="text" 
+                                className="currency-converter-input"
+                                onChange={(e) => this.handleInput(Math.abs(e.target.value.replace(/\D/g, '')))}
+                                /*value={priceInputValue}*/
+                                /* onFocus={(e) => this.handleInput(e)} */
+                                
+                            />
                         </CurrencyConverter>
                         <SyncAltIcon />
                          <CurrencyConverter>
