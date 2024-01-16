@@ -23,7 +23,7 @@ class CoinsList extends React.Component {
             const coins = data;
             this.setStateIfMounted({ coins, isLoading: false });
         } catch (err) {
-            console.log(err)
+            //console.log(err)
             this.setStateIfMounted({
                 errMessage: "Api is down check back later",
                 isLoading: false

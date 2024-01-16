@@ -28,6 +28,7 @@ import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import LinkIcon from '@mui/icons-material/Link';
 import SyncAltIcon from '@mui/icons-material/SyncAlt';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
+import { RailwayAlertTwoTone } from '@mui/icons-material';
 
 
 
@@ -39,7 +40,9 @@ class Coin extends Component {
         hasError: false,
         clipboard: null,
         placeholderCurrency: '',
-        priceInputValue: null
+        priceInputValue: '',
+        coinRatio: 1,
+        rawPrice: null
     }
 
     input = React.createRef();
@@ -55,19 +58,42 @@ class Coin extends Component {
             this.setState({
                 coin: newObj,
                 isLoading: false,
-                placeholderCurrency: currencySetter(newObj?.market_data.current_price[this.props.currency], this.props.currency),
-                priceInputValue: currencySetter(newObj?.market_data.current_price[this.props.currency], this.props.currency),
+                placeholderCurrency: currencySetter(newObj?.market_data.current_price[this.props.currency], this.props.currency, false),
+                priceInputValue: currencySetter(newObj?.market_data.current_price[this.props.currency], this.props.currency, false),
+                rawPrice: newObj?.market_data.current_price[this.props.currency]
             })
         }catch (err) {
             console.log(err)
         }
     }
 
-    handleInput(value) {
+    handleInput = (value) => {
       //const value = e.target.value;
-      const formattedValue = parseFloat(value).toFixed(2);
-     const price = currencySetter(formattedValue, this.props.currency);
-      this.setState({ priceInputValue: price });
+      //const formattedValue = parseFloat(value).toFixed(2);
+      console.log('heres handle input value-->',value, value.replace(/\D/g, ''))
+     const price = currencySetter(Math.abs(value.replace(/\D/g, '')), this.props.currency, false);
+     console.log(price)
+
+     const coinNumberCount = Math.abs(value.replace(/\D/g, '')) / this.state.rawPrice
+      this.setState({ 
+          priceInputValue: price,
+          coinRatio: coinNumberCount.toFixed(2) 
+        });
+    }
+
+    handleRatio = (e) =>  {
+        const ratio = Math.abs(e.target.value.replace(/\D/g, ''))
+        console.log("3 variables here:", ratio)
+        
+        const newPrice = ratio * this.state.rawPrice
+        console.count()
+        const formattedPrice = currencySetter(newPrice, this.props.currency, false)
+
+        this.setState({
+            coinRatio: ratio,
+            priceInputValue: formattedPrice
+
+        })
     }
 
     // handleFocus(e) {
@@ -80,7 +106,7 @@ class Coin extends Component {
 
     render() {
 
-        console.log('Here is the Current PRICE BABY from Coin.js--->', this.state.placeholderCurrency)
+        
 
         const coinData = this.state.coin
         const hasCoin = !this.state.isLoading && this.state.coin;
@@ -92,6 +118,10 @@ class Coin extends Component {
         const loss_1h = coinData?.market_data?.price_change_percentage_1h_in_currency[this.props.currency] < 0;
         const all_time_high = currencySetter(coinData?.market_data?.ath[this.props.currency], this.props.currency);
         const all_time_low = currencySetter(coinData?.market_data?.atl[this.props.currency], this.props.currency);
+
+        console.log('here is the price--->', coinData?.market_data.current_price[this.props.currency])
+        console.log('here is the calculated price--->', coinData?.market_data.current_price[this.props.currency] * 2)
+        console.log('here is the # of coins calculation--->', (coinData?.market_data.current_price[this.props.currency] * 2) / coinData?.market_data.current_price[this.props.currency] )
 
         //RIGHT COLUMN DATA
          const market_cap = abbrCurrencySetter(coinData?.market_data?.market_cap[this.props.currency], this.props.currency);
@@ -191,16 +221,20 @@ class Coin extends Component {
                                 /*pattern="^[0-9]+([.][0-9]+)?$"*/
                                 type="text" 
                                 className="currency-converter-input"
-                                onChange={(e) => this.handleInput(Math.abs(e.target.value.replace(/\D/g, '')))}
-                                /*value={priceInputValue}*/
-                                /* onFocus={(e) => this.handleInput(e)} */
-                                
+                                onChange={this.handleInput}
+                                value={priceInputValue}
+                                /*onFocus={(e) => this.handleFocus(e)}*/
                             />
                         </CurrencyConverter>
                         <SyncAltIcon />
                          <CurrencyConverter>
-                            <p>BTC</p>
-                            <input value="1" type="text" className="currency-converter-input" />
+                            <p>{coinData.symbol.toUpperCase()}</p>
+                            <input 
+                                value={this.state.coinRatio}
+                                onChange={this.handleRatio} 
+                                type="text" 
+                                className="currency-converter-input" 
+                            />
                         </CurrencyConverter>
                     </CurrencyConverterContainer>
                     
